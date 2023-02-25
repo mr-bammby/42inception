@@ -1,0 +1,26 @@
+version: "3.9"
+volumes:
+  site-volume:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${WP_HOST_VOLUME_PATH}
+      o: bind
+
+services:
+  nginx:
+    build: ./nginx
+    image: nginx
+    init: true
+    ports:
+      - "433:433"
+    volumes:
+      - site-volume:/var/www/wordpress
+    environment:
+      - DOMAIN=${DOMAIN}
+      - WP_HOST=${WP_HOST}
+      - WP_PORT=${WP_PORT}
+    restart: unless-stopped
+  wp:
+    image:
+      php-fpm:latest
